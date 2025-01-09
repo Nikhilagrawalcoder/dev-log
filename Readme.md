@@ -22,7 +22,7 @@ const Logger = require("log-vani");
 
 // Create a new Logger instance
 const logger = new Logger({
-  logFile: "path/to/your/logfile.log", // Optional: The log file location
+  logFile: "path/to/your/logfile.log",  The log file location
   colors: {
     info: "cyan", // Custom color for 'info' logs
     warn: "magenta", // Custom color for 'warn' logs

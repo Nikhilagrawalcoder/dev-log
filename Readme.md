@@ -1,14 +1,13 @@
-
 # Dev-Log
 
-A simple, customizable logging library for Node.js applications. `dev-log` supports multiple log levels, customizable formats, colored output, and custom log transports, making it ideal for development environments.
+A simple, customizable logging library for Node.js applications. `dev-logger` supports multiple log levels, customizable formats, colored output, and custom log transports, making it ideal for development environments.
 
 ## Installation
 
-You can install `dev-log` using npm:
+You can install `dev-logger` using npm:
 
 ```bash
-npm install dev-log
+npm install dev-logger
 ```
 
 ## Usage
@@ -18,24 +17,24 @@ Once installed, you can require and configure the logger in your Node.js applica
 ### Basic Usage
 
 ```javascript
-const Logger = require('dev-log');
+const Logger = require("dev-logger");
 
 // Create a new Logger instance
 const logger = new Logger({
-  logFile: 'path/to/your/logfile.log',  // Optional: The log file location
+  logFile: "path/to/your/logfile.log", // Optional: The log file location
   colors: {
-    info: 'cyan',     // Custom color for 'info' logs
-    warn: 'magenta',  // Custom color for 'warn' logs
-    error: 'red',     // Custom color for 'error' logs
-    debug: 'gray'     // Custom color for 'debug' logs
-  }
+    info: "cyan", // Custom color for 'info' logs
+    warn: "magenta", // Custom color for 'warn' logs
+    error: "red", // Custom color for 'error' logs
+    debug: "gray", // Custom color for 'debug' logs
+  },
 });
 
 // Log messages with different levels
-logger.info('This is an info message');
-logger.warn('This is a warning message');
-logger.error('This is an error message');
-logger.debug('This is a debug message');
+logger.info("This is an info message");
+logger.warn("This is a warning message");
+logger.error("This is an error message");
+logger.debug("This is a debug message");
 ```
 
 ### Log Levels
@@ -61,8 +60,8 @@ You can replace the format string with your custom format. For example, you can 
 
 ```javascript
 const logger = new Logger({
-  logFile: 'path/to/your/logfile.log',
-  format: '{level} - {message} at {timestamp} from {hostname}'
+  logFile: "path/to/your/logfile.log",
+  format: "{level} - {message} at {timestamp} from {hostname}",
 });
 ```
 
@@ -72,16 +71,16 @@ You can also integrate the logger with external services (such as sending logs t
 
 ```javascript
 const logger = new Logger({
-  logFile: 'path/to/your/logfile.log',
+  logFile: "path/to/your/logfile.log",
   customTransport: {
-    send: function(log) {
+    send: function (log) {
       // Send log to an external system, e.g., a remote logging server
-      console.log('Sending log to external service:', log);
-    }
-  }
+      console.log("Sending log to external service:", log);
+    },
+  },
 });
 
-logger.info('This log will be sent to an external service');
+logger.info("This log will be sent to an external service");
 ```
 
 ### JSON Logging
@@ -89,7 +88,7 @@ logger.info('This log will be sent to an external service');
 If you prefer to log in JSON format, you can use the `logAsJson` method. This is especially useful for log aggregation systems.
 
 ```javascript
-logger.logAsJson('info', 'This is a JSON log entry');
+logger.logAsJson("info", "This is a JSON log entry");
 ```
 
 ### Clear Logs
@@ -103,30 +102,30 @@ logger.clearLogs();
 ### Example: Full Configuration
 
 ```javascript
-const Logger = require('dev-log');
+const Logger = require("dev-log");
 
 // Create a new Logger instance with all options
 const logger = new Logger({
-  logFile: 'logs/app.log',
+  logFile: "logs/app.log",
   rateLimit: 2000, // Log rate limiting in milliseconds
-  format: '{level}: {message} at {timestamp} from {hostname}',
+  format: "{level}: {message} at {timestamp} from {hostname}",
   colors: {
-    info: 'cyan',
-    warn: 'magenta',
-    error: 'red',
-    debug: 'green'
+    info: "cyan",
+    warn: "magenta",
+    error: "red",
+    debug: "green",
   },
   customTransport: {
-    send: function(log) {
+    send: function (log) {
       // Send log to an external service (e.g., a monitoring system)
-      console.log('Sending log:', log);
-    }
-  }
+      console.log("Sending log:", log);
+    },
+  },
 });
 
-logger.info('Application started');
-logger.error('An error occurred');
-logger.debug('Debugging the app');
+logger.info("Application started");
+logger.error("An error occurred");
+logger.debug("Debugging the app");
 ```
 
 ## Features
@@ -141,10 +140,10 @@ logger.debug('Debugging the app');
 
 ## Installation
 
-To install `dev-log`, use the following npm command:
+To install `dev-logger`, use the following npm command:
 
 ```bash
-npm install dev-log
+npm install dev-logger
 ```
 
 ## API

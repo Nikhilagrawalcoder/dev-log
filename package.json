@@ -1,5 +1,5 @@
 {
-  "name": "dev-log",
+  "name": "dev-logger",
   "version": "1.0.0",
   "description": "A customizable and file-based logger with rate limiting and log rotation.",
   "main": "lib/logger.js",

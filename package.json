@@ -1,5 +1,5 @@
 {
-  "name": "dev-logger",
+  "name": "log-vani",
   "version": "1.0.0",
   "description": "A customizable and file-based logger with rate limiting and log rotation.",
   "main": "lib/logger.js",
@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Nikhilagrawalcoder/dev-log.git"
+    "url": "git+https://github.com/Nikhilagrawalcoder/dev-log.git"
   },
   "keywords": [
     "logger",
@@ -32,5 +32,9 @@
   },
   "dependencies": {
     "chalk": "^4.1.2"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "test"
   }
 }

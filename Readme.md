@@ -1,13 +1,14 @@
-# Dev-Log
 
-A simple, customizable logging library for Node.js applications. `dev-logger` supports multiple log levels, customizable formats, colored output, and custom log transports, making it ideal for development environments.
+# Log-Vani
+
+A simple, customizable logging library for Node.js applications. `log-vani` supports multiple log levels, customizable formats, colored output, and custom log transports, making it ideal for development environments.
 
 ## Installation
 
-You can install `dev-logger` using npm:
+You can install `log-vani` using npm:
 
 ```bash
-npm install dev-logger
+npm install log-vani
 ```
 
 ## Usage
@@ -17,7 +18,7 @@ Once installed, you can require and configure the logger in your Node.js applica
 ### Basic Usage
 
 ```javascript
-const Logger = require("dev-logger");
+const Logger = require("log-vani");
 
 // Create a new Logger instance
 const logger = new Logger({
@@ -102,7 +103,7 @@ logger.clearLogs();
 ### Example: Full Configuration
 
 ```javascript
-const Logger = require("dev-log");
+const Logger = require("log-vani");
 
 // Create a new Logger instance with all options
 const logger = new Logger({
@@ -140,10 +141,10 @@ logger.debug("Debugging the app");
 
 ## Installation
 
-To install `dev-logger`, use the following npm command:
+To install `log-vani`, use the following npm command:
 
 ```bash
-npm install dev-logger
+npm install log-vani
 ```
 
 ## API

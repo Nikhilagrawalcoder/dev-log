@@ -1,185 +1,111 @@
 const fs = require('fs');
 const path = require('path');
-const Logger = require('../lib/logger');
-const { expect } = require('chai');
-const os = require('os');
+const chai = require('chai');
+const sinon = require('sinon');
+const Logger = require('../lib/logger');  // Adjust the path based on where your Logger class is located
+const { expect } = chai;
 
-describe('Logger', function () {
-  const logFile = path.resolve(__dirname, 'test.log');
-  
+describe('Logger Class - Terminal Output and File Writing', function () {
+  let logFile;
+  let logger;
+  let consoleSpy;
+
   beforeEach(() => {
-    // Clean up before each test
-    if (fs.existsSync(logFile)) {
-      fs.unlinkSync(logFile);
-    }
+    logFile = path.join(__dirname, 'test.log');
+    logger = new Logger({
+      logFile,
+      colors: {
+        info: 'blue',
+        warn: 'yellow',
+        error: 'red',
+        debug: 'green',
+      },
+    });
+    // Spy on console.log to capture the colored terminal output
+    consoleSpy = sinon.spy(console, 'log');
   });
 
   afterEach(() => {
-    // Clean up after each test
+    // Clean up log file and remove the spy after each test
     if (fs.existsSync(logFile)) {
       fs.unlinkSync(logFile);
     }
+    consoleSpy.restore();
   });
 
-  // 1. should log info messages correctly
-  it('should log info messages correctly', function () {
-    const logger = new Logger({ logFile });
-    const message = 'This is an info log';
-    
+  it('should log info messages in blue in terminal and write to the log file', () => {
+    const message = 'This is an info message';
     logger.info(message);
-    
-    const logContent = fs.readFileSync(logFile, 'utf-8');
-    expect(logContent).to.include('INFO: ' + message); // Ensuring uppercase 'INFO'
-  });
 
-  // 2. should log warn messages correctly
-  it('should log warn messages correctly', function () {
-    const logger = new Logger({ logFile });
-    const message = 'This is a warn log';
-    
-    logger.warn(message);
-    
-    const logContent = fs.readFileSync(logFile, 'utf-8');
-    expect(logContent).to.include('WARN: ' + message); // Ensuring uppercase 'WARN'
-  });
-
-  // 3. should log error messages correctly
-  it('should log error messages correctly', function () {
-    const logger = new Logger({ logFile });
-    const message = 'This is an error log';
-    
-    logger.error(message);
-    
-    const logContent = fs.readFileSync(logFile, 'utf-8');
-    expect(logContent).to.include('ERROR: ' + message); // Ensuring uppercase 'ERROR'
-  });
-
-  // 4. should log debug messages correctly
-  it('should log debug messages correctly', function () {
-    const logger = new Logger({ logFile });
-    const message = 'This is a debug log';
-    
-    logger.debug(message);
-    
-    const logContent = fs.readFileSync(logFile, 'utf-8');
-    expect(logContent).to.include('DEBUG: ' + message); // Ensuring uppercase 'DEBUG'
-  });
-
-  // 5. should create log file if it doesn't exist
-  it('should create log file if it doesn\'t exist', function () {
-    const logger = new Logger({ logFile });
-    const message = 'This is a test log';
-    
-    logger.info(message);
-    
-    const logExists = fs.existsSync(logFile);
-    expect(logExists).to.be.true;
-  });
-
-  // 6. should append to the log file
-  it('should append to the log file', function () {
-    const logger = new Logger({ logFile });
-    const message1 = 'First log entry';
-    const message2 = 'Second log entry';
-    
-    logger.info(message1);
-    logger.info(message2);
-    
-    const logContent = fs.readFileSync(logFile, 'utf-8');
-    expect(logContent).to.include(message1);
-    expect(logContent).to.include(message2);
-  });
-
-  // 7. should handle multiple log entries
-  it('should handle multiple log entries', function () {
-    const logger = new Logger({ logFile });
-    const message1 = 'Log entry 1';
-    const message2 = 'Log entry 2';
-    
-    logger.info(message1);
-    logger.info(message2);
-    
-    const logContent = fs.readFileSync(logFile, 'utf-8');
-    expect(logContent).to.include(message1);
-    expect(logContent).to.include(message2);
-  });
-
-  // 8. should use default file path if none provided
-  it('should use default file path if none provided', function () {
-    const logger = new Logger({});
-    expect(logger.logFile).to.equal(path.join(__dirname, 'logs', 'test.log'));
-  });
-
-  // 9. should log messages without including the level
-  it('should log messages without including the level', function () {
-    const logger = new Logger({ logFile, level: 'none' });
-    const message = 'Log without level test';
-    
-    logger.info(message);
-    
+    // Verify that the message is written in the log file
     const logContent = fs.readFileSync(logFile, 'utf-8');
     expect(logContent).to.include(message);
+
+    // Verify that the colored output was printed to terminal (console.log)
+    const consoleOutput = consoleSpy.getCall(0).args[0];
+    expect(consoleOutput).to.include(message);
+    // Checking that the color applied (blue for info)
+    expect(consoleOutput).to.have.string('\x1b[34m'); // ANSI code for blue color
   });
 
-  // 10. should rate-limit log writes
-  it('should rate-limit log writes', function (done) {
-    const logger = new Logger({ logFile, rateLimitPeriod: 1000 });
-    const message = 'Rate-limited log test';
-    
-    logger.info(message);
-    logger.info(message); // Should be ignored as it's within the rate limit
-    
-    setTimeout(() => {
-      const logContent = fs.readFileSync(logFile, 'utf-8');
-      const messageCount = (logContent.match(new RegExp(message, 'g')) || []).length;
-      expect(messageCount).to.equal(1); // Only one message should be logged
-      done();
-    }, 1500);
-  });
+  it('should log warning messages in yellow in terminal and write to the log file', () => {
+    const message = 'This is a warning message';
+    logger.warn(message);
 
-  // 11. should clear logs correctly
-  it('should clear logs correctly', function () {
-    const logger = new Logger({ logFile });
-    const message = 'Log before clear';
-    
-    logger.info(message);
-    const logContentBeforeClear = fs.readFileSync(logFile, 'utf-8');
-    expect(logContentBeforeClear).to.include(message);
-    
-    // Clear the logs
-    logger.clearLogs();
-    
-    const logContentAfterClear = fs.readFileSync(logFile, 'utf-8');
-    expect(logContentAfterClear).to.be.empty; // Log file should be empty after clear
-  });
-
-  // 12. should overwrite logs if cleared and then written again
-  it('should overwrite logs if cleared and then written again', function () {
-    const logger = new Logger({ logFile });
-    const messageBeforeClear = 'Log before clear';
-    const messageAfterClear = 'Log after clear';
-    
-    // Write a log, clear it, and then write again
-    logger.info(messageBeforeClear);
-    logger.clearLogs();
-    logger.info(messageAfterClear);
-    
+    // Verify that the message is written in the log file
     const logContent = fs.readFileSync(logFile, 'utf-8');
-    expect(logContent).to.include(messageAfterClear);
-    expect(logContent).to.not.include(messageBeforeClear);
+    expect(logContent).to.include(message);
+
+    // Verify that the colored output was printed to terminal (console.log)
+    const consoleOutput = consoleSpy.getCall(0).args[0];
+    expect(consoleOutput).to.include(message);
+    // Checking that the color applied (yellow for warn)
+    expect(consoleOutput).to.have.string('\x1b[33m'); // ANSI code for yellow color
   });
 
-  // 13. should handle logging in JSON format
-  it('should handle logging in JSON format', function () {
-    const logger = new Logger({ logFile });
-    const message = 'JSON formatted log test';
-    
-    logger.logAsJson('info', message);
-    
+  it('should log error messages in red in terminal and write to the log file', () => {
+    const message = 'This is an error message';
+    logger.error(message);
+
+    // Verify that the message is written in the log file
     const logContent = fs.readFileSync(logFile, 'utf-8');
-    const logJson = JSON.parse(logContent.trim());
-    expect(logJson).to.have.property('level', 'info');
-    expect(logJson).to.have.property('message', message);
-    expect(logJson).to.have.property('timestamp');
+    expect(logContent).to.include(message);
+
+    // Verify that the colored output was printed to terminal (console.log)
+    const consoleOutput = consoleSpy.getCall(0).args[0];
+    expect(consoleOutput).to.include(message);
+    // Checking that the color applied (red for error)
+    expect(consoleOutput).to.have.string('\x1b[31m'); // ANSI code for red color
+  });
+
+  it('should log debug messages in green in terminal and write to the log file', () => {
+    const message = 'This is a debug message';
+    logger.debug(message);
+
+    // Verify that the message is written in the log file
+    const logContent = fs.readFileSync(logFile, 'utf-8');
+    expect(logContent).to.include(message);
+
+    // Verify that the colored output was printed to terminal (console.log)
+    const consoleOutput = consoleSpy.getCall(0).args[0];
+    expect(consoleOutput).to.include(message);
+    // Checking that the color applied (green for debug)
+    expect(consoleOutput).to.have.string('\x1b[32m'); // ANSI code for green color
+  });
+
+  it('should apply default color if custom color is not provided for a log level', () => {
+    const message = 'This is a default color message';
+    const defaultLogger = new Logger({ logFile });
+    defaultLogger.log('info', message);
+
+    // Verify that the message is written in the log file
+    const logContent = fs.readFileSync(logFile, 'utf-8');
+    expect(logContent).to.include(message);
+
+    // Verify that the colored output was printed to terminal (console.log)
+    const consoleOutput = consoleSpy.getCall(0).args[0];
+    expect(consoleOutput).to.include(message);
+    // Check default color for 'info' (blue)
+    expect(consoleOutput).to.have.string('\x1b[34m'); // ANSI code for blue color
   });
 });

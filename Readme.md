@@ -4,6 +4,8 @@ A simple, customizable logging library for Node.js applications. `log-vani` supp
 
 ## Installation
 
+https://www.npmjs.com/package/log-vani
+
 You can install `log-vani` using npm:
 
 ```bash

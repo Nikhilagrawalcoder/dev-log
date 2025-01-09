@@ -1,0 +1,36 @@
+{
+  "name": "dev-log",
+  "version": "1.0.0",
+  "description": "A customizable and file-based logger with rate limiting and log rotation.",
+  "main": "lib/logger.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Nikhilagrawalcoder/dev-log.git"
+  },
+  "keywords": [
+    "logger",
+    "logging",
+    "file-logging",
+    "rate-limiting",
+    "log-rotation",
+    "dev-log"
+  ],
+  "author": "Nikhilagrawal <nikhilagrawal0605@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Nikhilagrawalcoder/dev-log/issues"
+  },
+  "homepage": "https://github.com/Nikhilagrawalcoder/dev-log#readme",
+  "devDependencies": {
+    "chai": "^4.3.7",
+    "glob": "^11.0.0",
+    "mocha": "^10.2.0",
+    "sinon": "^19.0.2"
+  },
+  "dependencies": {
+    "chalk": "^4.1.2"
+  }
+}

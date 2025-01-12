@@ -1,6 +1,6 @@
 {
   "name": "log-vani",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "A customizable and file-based logger with rate limiting and log rotation.",
   "main": "lib/logger.js",
   "scripts": {

@@ -1,20 +1,16 @@
 # Log-Vani
 
-A simple, customizable logging library for Node.js applications. `log-vani` supports multiple log levels, customizable formats, colored output, and custom log transports, making it ideal for development environments.
+A robust and customizable logging library for Node.js applications. `log-vani` supports multiple log levels, customizable formats, color-coded output, JSON logging, and integration with custom log transports, making it suitable for both development and production environments.
 
 ## Installation
 
-https://www.npmjs.com/package/log-vani
-
-You can install `log-vani` using npm:
+Install `log-vani` using npm:
 
 ```bash
 npm install log-vani
 ```
 
 ## Usage
-
-Once installed, you can require and configure the logger in your Node.js application.
 
 ### Basic Usage
 
@@ -23,13 +19,7 @@ const Logger = require("log-vani");
 
 // Create a new Logger instance
 const logger = new Logger({
-  logFile: "path/to/your/logfile.log",  The log file location
-  colors: {
-    info: "cyan", // Custom color for 'info' logs
-    warn: "magenta", // Custom color for 'warn' logs
-    error: "red", // Custom color for 'error' logs
-    debug: "gray", // Custom color for 'debug' logs
-  },
+  logFile: "path/to/your/logfile.log", // Path to the log file
 });
 
 // Log messages with different levels
@@ -41,24 +31,26 @@ logger.debug("This is a debug message");
 
 ### Log Levels
 
-- `info`: Informational messages (blue by default)
-- `warn`: Warning messages (yellow by default)
-- `error`: Error messages (red by default)
-- `debug`: Debugging messages (green by default)
-
-Each log level is color-coded by default for better readability. You can customize the colors and format as needed.
+- `info`: Informational messages
+- `warn`: Warning messages
+- `error`: Error messages
+- `debug`: Debugging messages
 
 ### Custom Log Formats
 
-You can customize the log format using the `format` option in the constructor. By default, the log format is:
+You can customize the log format using the `format` option. The default format is:
 
 ```text
-{level}: {message} at {timestamp}
+[{level}] {message} at {timestamp}
 ```
 
-You can replace the format string with your custom format. For example, you can include additional information like the hostname, user ID, etc.
+You can replace this format with your custom string containing placeholders:
 
-### Example of Custom Format
+- `{level}`: The log level (e.g., INFO, WARN, ERROR, DEBUG).
+- `{message}`: The log message.
+- `{timestamp}`: The current timestamp.
+
+#### Example of Custom Format
 
 ```javascript
 const logger = new Logger({
@@ -67,16 +59,28 @@ const logger = new Logger({
 });
 ```
 
+### Color-Coded Logs
+
+Each log level is color-coded for better readability in the terminal. The default colors are:
+
+- `info`: Green
+- `warn`: Yellow with Magenta background
+- `error`: Red with White background
+- `debug`: Cyan
+
+You can customize the colors in the terminal output.
+
 ### Custom Transport
 
-You can also integrate the logger with external services (such as sending logs to a remote server) by using the `customTransport` option. Provide a custom transport that has a `send` method.
+You can send logs to external services (e.g., a logging server) using the `customTransport` option. The transport must implement a `send` method.
+
+#### Example
 
 ```javascript
 const logger = new Logger({
   logFile: "path/to/your/logfile.log",
   customTransport: {
     send: function (log) {
-      // Send log to an external system, e.g., a remote logging server
       console.log("Sending log to external service:", log);
     },
   },
@@ -87,110 +91,88 @@ logger.info("This log will be sent to an external service");
 
 ### JSON Logging
 
-If you prefer to log in JSON format, you can use the `logAsJson` method. This is especially useful for log aggregation systems.
+If you prefer logging in JSON format, you can use the `logAsJson` method. This is especially useful for log aggregation systems.
 
 ```javascript
 logger.logAsJson("info", "This is a JSON log entry");
 ```
 
-### Clear Logs
+### Clearing Logs
 
-You can clear the log file using the `clearLogs` method. This is useful if you want to clear logs between runs or after a certain period of time.
+Clear the log file using the `clearLogs` method. This is useful when you need to reset logs between runs.
 
 ```javascript
 logger.clearLogs();
 ```
 
-### Example: Full Configuration
+### Rate Limiting
+
+Control the rate at which logs are written using the `rateLimit` option. This prevents spamming logs in high-frequency scenarios.
+
+```javascript
+const logger = new Logger({
+  rateLimit: 2000, // Minimum 2 seconds between logs
+});
+```
+
+## Full Example
 
 ```javascript
 const Logger = require("log-vani");
 
-// Create a new Logger instance with all options
+// Create a new Logger instance with full configuration
 const logger = new Logger({
   logFile: "logs/app.log",
   rateLimit: 2000, // Log rate limiting in milliseconds
-  format: "{level}: {message} at {timestamp} from {hostname}",
-  colors: {
-    info: "cyan",
-    warn: "magenta",
-    error: "red",
-    debug: "green",
-  },
+  format: "[{level}] {message} at {timestamp}",
   customTransport: {
     send: function (log) {
-      // Send log to an external service (e.g., a monitoring system)
+      // Send log to an external service
       console.log("Sending log:", log);
     },
   },
 });
 
 logger.info("Application started");
+logger.warn("This is a warning");
 logger.error("An error occurred");
-logger.debug("Debugging the app");
-```
-
-## Features
-
-- **Multiple Log Levels**: Supports `info`, `warn`, `error`, and `debug` log levels.
-- **Custom Log Formats**: Fully customizable log format for timestamp, level, and message.
-- **Color-Coded Logs**: Customizable colors for each log level.
-- **Custom Transport**: Easily send logs to external systems or services.
-- **JSON Logging**: Log entries can be written in structured JSON format.
-- **Clear Logs**: Clears the log file if required.
-- **File-Based Logging**: Logs are written to a specified file (defaults to `test.log`).
-
-## Installation
-
-To install `log-vani`, use the following npm command:
-
-```bash
-npm install log-vani
+logger.debug("Debugging details");
+logger.logAsJson("info", "JSON formatted log entry");
+logger.clearLogs();
 ```
 
 ## API
 
 ### `new Logger(options)`
 
-Creates a new logger instance. The available options are:
+Creates a new logger instance.
 
-- `logFile` (string): The path of the log file (default is `test.log`).
-- `rateLimit` (number): The minimum time between log writes (default is `1000ms`).
-- `format` (string): A string to define the log message format. Available placeholders: `{level}`, `{message}`, `{timestamp}`, `{hostname}`.
-- `colors` (object): Custom colors for each log level. Default is:
-  ```javascript
-  {
-    info: 'blue',
-    warn: 'yellow',
-    error: 'red',
-    debug: 'green'
-  }
-  ```
-- `customTransport` (object): A custom transport with a `send` method for sending logs externally.
+#### Options:
 
-### `Logger.info(message)`
+- `logFile` (string): Path to the log file. Default is `test.log`.
+- `rateLimit` (number): Minimum time between log writes in milliseconds. Default is `1000ms`.
+- `format` (string): Custom format for log messages. Placeholders include `{level}`, `{message}`, `{timestamp}`.
+- `customTransport` (object): An object with a `send` method for sending logs to external systems.
 
-Logs an info-level message.
+### Methods:
 
-### `Logger.warn(message)`
+- `info(message)`: Logs an informational message.
+- `warn(message)`: Logs a warning message.
+- `error(message)`: Logs an error message.
+- `debug(message)`: Logs a debug message.
+- `logAsJson(level, message)`: Logs a message in JSON format.
+- `clearLogs()`: Clears the log file.
 
-Logs a warning-level message.
+## Features
 
-### `Logger.error(message)`
-
-Logs an error-level message.
-
-### `Logger.debug(message)`
-
-Logs a debug-level message.
-
-### `Logger.clearLogs()`
-
-Clears the log file.
-
-### `Logger.logAsJson(level, message)`
-
-Logs the message in JSON format.
+- **Multiple Log Levels**: Supports `info`, `warn`, `error`, and `debug` log levels.
+- **Custom Formats**: Define custom formats for your log messages.
+- **Color-Coded Logs**: Terminal output is color-coded for clarity.
+- **Custom Transport**: Send logs to external systems.
+- **JSON Logging**: Log entries in JSON format.
+- **File-Based Logging**: Logs are written to a specified file.
+- **Rate Limiting**: Prevent excessive log writes in high-frequency scenarios.
+- **Clear Logs**: Reset the log file when needed.
 
 ## License
 
